@@ -6,3 +6,7 @@ Discord Bot that notifies you when vaccination slots are available for a particu
 ## Prerequisites
 You need to have a Discord Server where you will add this bot and permit it to send a message in the channel.
 Clone the repository and add environment variables in your .env file.
+
+
+
+![ss](img/img1.jpg)
