@@ -2,9 +2,18 @@ require('dotenv').config();
 const discord = require('discord.js');
 const cron = require('node-cron');
 const axios = require('axios');
+const moment=require('moment');
 
 const client = new discord.Client();
 let requestsMade = 0;
+const d = new Date();
+const currentOffset = d.getTimezoneOffset();
+
+const ISTOffset = 330; // IST offset UTC +5:30
+
+const ISTTime = new Date(
+  d.getTime() + (ISTOffset + currentOffset) * 60000
+);
 client.login(process.env.BOT_TOKEN);
 client.on('ready', () => {
 	console.log('Bot has logged in!');
@@ -37,6 +46,9 @@ client.on('ready', () => {
 				if (requestsMade === 1 || requestsMade % 10 === 0) {
 					log(`Requests Made: ${requestsMade}`);
 				}
+
+
+
 				const centers = data.centers;
 				const length = centers.length;
 				for (let i = 0; i < length; i++) {
@@ -51,13 +63,12 @@ client.on('ready', () => {
 						const capacity = currentSession.available_capacity;
 						const date = currentSession.date;
 						const vaccineType = currentSession.vaccine;
-
-						if (ageLimit === 18 && capacity > 2) {
+						if (ageLimit === 18 && capacity > 5) {
 							// console.log(
 							// 	`Name: ${centerName}, Age: ${ageLimit}`
 							// );
 							announce.send(
-								`\n***${district}***\nAvailable at: ${centerName} on ${date}\nAvailable capacity: ${capacity}\nVaccine Type: ${vaccineType}\nPin Code: ${pinCode}`
+								`\n**${district}** *Last Checked:* *${moment().local().format('LTS')}*\nAvailable at: ${centerName} on ${date}\nAvailable capacity: ${capacity}\nVaccine Type: ${vaccineType}\nPin Code: ${pinCode}\n`
 							);
 						}
 					}
@@ -72,14 +83,6 @@ client.on('ready', () => {
 			});
 	};
 	cron.schedule('* * * * *', () => {
-		const d = new Date();
-		const currentOffset = d.getTimezoneOffset();
-
-		const ISTOffset = 330; // IST offset UTC +5:30
-
-		const ISTTime = new Date(
-			d.getTime() + (ISTOffset + currentOffset) * 60000
-		);
 
 		//https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=507&date=04-05-2021
 		const url = `${process.env.API_ENDPOINT}?district_id=${
