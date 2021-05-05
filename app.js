@@ -3,6 +3,7 @@ const discord = require('discord.js');
 const cron = require('node-cron');
 const axios = require('axios');
 
+
 const client = new discord.Client();
 let requestsMade = 0;
 client.login(process.env.BOT_TOKEN);
@@ -11,7 +12,7 @@ client.on('ready', () => {
 	let announce = client.channels.cache.find(
 		(channel) => channel.id === process.env.CHANNEL_ID
 	);
-	announce.send('Bot has started...');
+
 
 	let logChannel = client.channels.cache.find(
 		(channel) => channel.id === process.env.LOG_CHANNEL_ID
@@ -25,7 +26,22 @@ client.on('ready', () => {
 
 	const sendData = (url) => {
 		axios
-			.get(url)
+			.get(url,  {headers:  {
+				'authority': 'cdn-api.co-vin.in',
+				'pragma': 'no-cache',
+				'cache-control': 'no-cache',
+				'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
+				'accept': 'application/json, text/plain, */*',
+				'sec-ch-ua-mobile': '?0',
+				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36',
+				'origin': 'https://www.cowin.gov.in',
+				'sec-fetch-site': 'cross-site',
+				'sec-fetch-mode': 'cors',
+				'sec-fetch-dest': 'empty',
+				'referer': 'https://www.cowin.gov.in/',
+				'accept-language': 'en',
+			}}
+		)
 			.then((response) => response.data)
 			.then((data) => {
 				if (!data.centers) {
@@ -34,7 +50,7 @@ client.on('ready', () => {
 					);
 				}
 				requestsMade++;
-				if (requestsMade === 1 || requestsMade % 10 === 0) {
+				if (requestsMade === 1 || requestsMade % 100 === 0) {
 					log(`Requests Made: ${requestsMade}`);
 				}
 
@@ -78,7 +94,7 @@ client.on('ready', () => {
 				log(message);
 			});
 	};
-	cron.schedule('* * * * *', () => {
+	cron.schedule('*/30 * * * * *', () => {
 		const d = new Date();
 		const currentOffset = d.getTimezoneOffset();
 
@@ -94,7 +110,7 @@ client.on('ready', () => {
 		}&date=0${ISTTime.getDate()}-0${
 			ISTTime.getMonth() + 1
 		}-${ISTTime.getFullYear()}`;
-
+        console.log(url);
 		sendData(url);
 	});
 });
