@@ -1,8 +1,12 @@
 BOT_TOKEN=<bot token created on discord>
 CHANNEL_ID=<channel ID on which message will be sent>
 CITY_ID=<your city code>
+API_ENDPOINT=
+LOG_CHANNEL_ID=
 
 // EXAMPLE:
 // BOT_TOKEN=SKJDASODJMWIW92SDADSLD0A-KFSDY._9WEWJI23LASDSDA
 // CHANNEL_ID=9287329729918273239
 // CITY_ID=512
+//API_ENDPOINT=https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict
+//LOG_CHANNEL_ID=9287329729918273239
