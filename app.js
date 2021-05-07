@@ -58,7 +58,7 @@ client.on("ready", () => {
         }
 
         requestsMade++;
-        if (requestsMade === 1 || requestsMade % 30 === 0) {
+        if (requestsMade === 1 || requestsMade % 60 === 0) {
           log(`Requests Made: ${requestsMade}`);
         }
 
@@ -104,7 +104,7 @@ client.on("ready", () => {
         log(message, status);
       });
   };
-  cron.schedule("*/20 * * * * *", () => {
+  cron.schedule("*/5 * * * * *", () => {
     const d = new Date();
     const currentOffset = d.getTimezoneOffset();
 
