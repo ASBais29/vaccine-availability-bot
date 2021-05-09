@@ -4,13 +4,13 @@ const cron = require("node-cron");
 const axios = require("axios");
 
 const client = new discord.Client();
-let requestsMade = 0;
-let errorReqs = 0;
+let requestsMade_Ajmer = 0;
+let requestsMade_Jaipur=0;
 client.login(process.env.BOT_TOKEN);
 client.on("ready", () => {
   console.log("Bot has logged in!");
 
-  const sendData = (url, channel_id, log_id) => {
+  const sendData = (url, channel_id, log_id,requestsMade) => {
     axios
       .get(url, {
         headers: {
@@ -41,10 +41,10 @@ client.on("ready", () => {
         );
         let announce = client.channels.cache.find(
           (channel) => channel.id === channel_id
-        );
-
+        );  
         requestsMade++;
-        if (requestsMade === 1 || requestsMade % 120 === 0) {
+        
+        if (requestsMade === 1 || requestsMade % 30 === 0) {
           logChannel.send(`Requests Made: ${requestsMade}`);
         }
 
@@ -68,7 +68,14 @@ client.on("ready", () => {
                 timeZone: "Asia/Kolkata",
               })
               .split(",")[1];
-
+              if(center.district_name=='Ajmer')
+              {
+                requestsMade_Ajmer=requestsMade;
+              }
+              if(center.district_name=='Jaipur II')
+              {
+                requestsMade_Jaipur=requestsMade;
+              }  
             if (ageLimit === 18 && capacity > 1) {
               // console.log(
               // 	`Name: ${centerName}, Age: ${ageLimit}`
@@ -111,7 +118,7 @@ client.on("ready", () => {
     }&date=0${ISTTime.getDate()}-0${
       ISTTime.getMonth() + 1
     }-${ISTTime.getFullYear()}`;
-    sendData(url,process.env.CHANNEL_ID,process.env.LOG_CHANNEL_ID);
-    sendData(url_jaipur, process.env.JAIPUR_CHANNEL_ID, process.env.LOG_JAIPUR);
+    sendData(url,process.env.CHANNEL_ID,process.env.LOG_CHANNEL_ID,requestsMade_Ajmer);
+    sendData(url_jaipur, process.env.JAIPUR_CHANNEL_ID, process.env.LOG_JAIPUR,requestsMade_Jaipur);
   });
 });
