@@ -69,11 +69,6 @@ client.on("ready", () => {
               })
               .split(",")[1];
 
-            if (centerName == "Chandlai PHC CVC")
-              announce.send(
-                `\n**${district}** *Last Checked:${checkedAt}*\nAvailable at: ${centerName} on ${date}\nAvailable capacity: ${capacity}\nVaccine Type: ${vaccineType}\nPin Code: ${pinCode}\n_____`
-              );
-
             if (ageLimit === 18 && capacity > 1) {
               // console.log(
               // 	`Name: ${centerName}, Age: ${ageLimit}`
