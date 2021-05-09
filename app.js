@@ -9,28 +9,8 @@ let errorReqs = 0;
 client.login(process.env.BOT_TOKEN);
 client.on("ready", () => {
   console.log("Bot has logged in!");
-  let announce = client.channels.cache.find(
-    (channel) => channel.id === process.env.CHANNEL_ID
-  );
 
-  let logChannel = client.channels.cache.find(
-    (channel) => channel.id === process.env.LOG_CHANNEL_ID
-  );
-  logChannel.send("Errors will be logged...");
-
-  const log = (message, status) => {
-    // console.log(message);
-    if (status != null && status == 403) {
-      errorReqs++;
-    }
-    if (errorReqs > 10) {
-      logChannel.send("Exiting process.");
-      process.exit(0);
-    }
-    logChannel.send(message);
-  };
-
-  const sendData = (url) => {
+  const sendData = (url, channel_id, log_id) => {
     axios
       .get(url, {
         headers: {
@@ -56,10 +36,16 @@ client.on("ready", () => {
         if (!data.centers) {
           throw new Error("'centers' is not defined in API response.");
         }
+        let logChannel = client.channels.cache.find(
+          (channel) => channel.id === log_id
+        );
+        let announce = client.channels.cache.find(
+          (channel) => channel.id === channel_id
+        );
 
         requestsMade++;
         if (requestsMade === 1 || requestsMade % 120 === 0) {
-          log(`Requests Made: ${requestsMade}`);
+          logChannel.send(`Requests Made: ${requestsMade}`);
         }
 
         const centers = data.centers;
@@ -82,7 +68,12 @@ client.on("ready", () => {
                 timeZone: "Asia/Kolkata",
               })
               .split(",")[1];
-        
+
+            if (centerName == "Chandlai PHC CVC")
+              announce.send(
+                `\n**${district}** *Last Checked:${checkedAt}*\nAvailable at: ${centerName} on ${date}\nAvailable capacity: ${capacity}\nVaccine Type: ${vaccineType}\nPin Code: ${pinCode}\n_____`
+              );
+
             if (ageLimit === 18 && capacity > 1) {
               // console.log(
               // 	`Name: ${centerName}, Age: ${ageLimit}`
@@ -96,12 +87,14 @@ client.on("ready", () => {
       })
       .catch((err) => {
         let message = `*Request #${requestsMade}*\nError occured: ${err.message}\n`;
-        let status = null;
         if (err.response && err.response.status) {
           message += `Response status code: ${err.response.status}`;
           status = err.response.status;
         }
-        log(message, status);
+        let logChannel = client.channels.cache.find(
+          (channel) => channel.id === log_id
+        );
+        logChannel.send(message);
       });
   };
   cron.schedule("*/10 * * * * *", () => {
@@ -112,12 +105,18 @@ client.on("ready", () => {
 
     const ISTTime = new Date(d.getTime() + (ISTOffset + currentOffset) * 60000);
 
-    //https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=507&date=04-05-2021
     const url = `${process.env.API_ENDPOINT}?district_id=${
       process.env.CITY_ID
     }&date=0${ISTTime.getDate()}-0${
       ISTTime.getMonth() + 1
     }-${ISTTime.getFullYear()}`;
-    sendData(url);
+
+    const url_jaipur = `${process.env.API_ENDPOINT}?district_id=${
+      process.env.JAIPUR_ID
+    }&date=0${ISTTime.getDate()}-0${
+      ISTTime.getMonth() + 1
+    }-${ISTTime.getFullYear()}`;
+    sendData(url,process.env.CHANNEL_ID,process.env.LOG_CHANNEL_ID);
+    sendData(url_jaipur, process.env.JAIPUR_CHANNEL_ID, process.env.LOG_JAIPUR);
   });
 });
