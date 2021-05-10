@@ -44,7 +44,7 @@ client.on("ready", () => {
         );  
         requestsMade++;
         
-        if (requestsMade === 1 || requestsMade % 30 === 0) {
+        if (requestsMade === 1 || requestsMade % 120 === 0) {
           logChannel.send(`Requests Made: ${requestsMade}`);
         }
 
@@ -115,7 +115,7 @@ client.on("ready", () => {
 
     const url_jaipur = `${process.env.API_ENDPOINT}?district_id=${
       process.env.JAIPUR_ID
-    }&date=0${ISTTime.getDate()}-0${
+    }&date=${ISTTime.getDate()}-0${
       ISTTime.getMonth() + 1
     }-${ISTTime.getFullYear()}`;
     sendData(url,process.env.CHANNEL_ID,process.env.LOG_CHANNEL_ID,requestsMade_Ajmer);
