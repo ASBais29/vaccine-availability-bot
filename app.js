@@ -47,7 +47,7 @@ client.on("ready", () => {
         if (requestsMade === 1 || requestsMade % 120 === 0) {
           logChannel.send(`Requests Made: ${requestsMade}`);
         }
-
+   console.log(url);
         const centers = data.centers;
         const length = centers.length;
         for (let i = 0; i < length; i++) {
@@ -76,7 +76,7 @@ client.on("ready", () => {
               {
                 requestsMade_Jaipur=requestsMade;
               }  
-            if (ageLimit === 18 && capacity > 1) {
+            if (ageLimit === 18 && capacity > 10) {
               // console.log(
               // 	`Name: ${centerName}, Age: ${ageLimit}`
               // );
@@ -109,16 +109,18 @@ client.on("ready", () => {
 
     const url = `${process.env.API_ENDPOINT}?district_id=${
       process.env.CITY_ID
-    }&date=0${ISTTime.getDate()}-0${
+    }&date=${ISTTime.getDate()}-0${
       ISTTime.getMonth() + 1
     }-${ISTTime.getFullYear()}`;
-
+       
+  let date=ISTTime.getDate()>=1&&ISTTime.getDate()<10?'0'+ISTTime.getDate():ISTTime.getDate();
     const url_jaipur = `${process.env.API_ENDPOINT}?district_id=${
       process.env.JAIPUR_ID
-    }&date=${ISTTime.getDate()}-0${
+    }&date=${date}-0${
       ISTTime.getMonth() + 1
     }-${ISTTime.getFullYear()}`;
     sendData(url,process.env.CHANNEL_ID,process.env.LOG_CHANNEL_ID,requestsMade_Ajmer);
     sendData(url_jaipur, process.env.JAIPUR_CHANNEL_ID, process.env.LOG_JAIPUR,requestsMade_Jaipur);
   });
 });
+
