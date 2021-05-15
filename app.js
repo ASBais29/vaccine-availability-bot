@@ -47,7 +47,6 @@ client.on("ready", () => {
         if (requestsMade === 1 || requestsMade % 120 === 0) {
           logChannel.send(`Requests Made: ${requestsMade}`);
         }
-   console.log(url);
         const centers = data.centers;
         const length = centers.length;
         for (let i = 0; i < length; i++) {
